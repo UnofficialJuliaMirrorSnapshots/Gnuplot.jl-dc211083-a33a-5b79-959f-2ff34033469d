@@ -205,6 +205,8 @@ function println(gp::Session, str::AbstractString)
 end
 
 
+println(gp::DrySession, d::DataSource) = nothing
+
 function println(gp::Session, d::DataSource)
     if typeof(gp) == concretetype(Session)
         if !state.silent  &&  state.verbose
@@ -231,7 +233,7 @@ function println(gp::Session, d::DataSource)
 end
 
 # --------------------------------------------------------------------
-writeread(gp::DrySession, str::AbstractString) = ""
+writeread(gp::DrySession, str::AbstractString) = [""]
 function writeread(gp::Session, str::AbstractString)
     global state
     silent = state.silent
@@ -539,6 +541,7 @@ end
 # --------------------------------------------------------------------
 internal_save(gp::DrySession; kw...) = internal_save(gp, gp; kw...)
 function internal_save(gp::DrySession, stream; term::AbstractString="", output::AbstractString="")
+    println(stream, "reset")
     if term != ""
         former_term = writeread(gp, "print GPVAL_TERM")[1]
         former_opts = writeread(gp, "print GPVAL_TERMOPTIONS")[1]
